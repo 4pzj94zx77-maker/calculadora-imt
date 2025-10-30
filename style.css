@@ -1,0 +1,146 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Corpo */
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  background-color: #ffffff;
+  color: #2e4e52;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Container principal */
+.app-container {
+  width: 420px;
+  height: 580px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  text-align: center;
+  border-radius: 10px;
+  padding: 20px 0;
+}
+
+/* Logótipo */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 220px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+/* Formulário */
+.form-container {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+label {
+  font-weight: 600;
+  width: 85%;
+  text-align: left;
+}
+
+.valor-input {
+  position: relative;
+  width: 85%;
+}
+
+.valor-input input {
+  width: 100%;
+  padding: 8px 8px 8px 22px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.valor-input .euro-simbolo {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+select {
+  width: 85%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.jovem-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 85%;
+  gap: 8px;
+}
+
+button {
+  width: 85%;
+  padding: 10px 0;
+  background-color: #2e4e52;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #366065;
+}
+
+/* Resultados */
+#resultados {
+  width: 85%;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: left;
+}
+
+#resultados p {
+  margin: 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+/* Rodapé */
+footer {
+  width: 90%;
+  text-align: center;
+  font-size: 11px;
+  color: #555;
+  line-height: 1.4;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+}

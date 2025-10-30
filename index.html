@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora IMT V1.0</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Logótipo -->
+    <div class="logo-container">
+      <img id="logo" src="assets/icon.png" alt="Falcão Real Estate Agency" class="logo">
+    </div>
+
+    <!-- Formulário -->
+    <div class="form-container">
+      <label for="valor">Valor de Aquisição (€):</label>
+      <div class="valor-input">
+        <span class="euro-simbolo">€</span>
+        <input type="number" id="valor" placeholder="Introduza valor da compra">
+      </div>
+
+      <label for="tipo">Tipo de Habitação:</label>
+      <select id="tipo">
+        <option value="habitacao_propria">Habitação Própria Permanente</option>
+        <option value="secundaria">Habitação Secundária</option>
+        <option value="terrenos">Terrenos ou Outros</option>
+      </select>
+
+      <div class="jovem-container">
+        <label for="jovem">Jovem até 35 anos</label>
+        <input type="checkbox" id="jovem">
+      </div>
+
+      <button id="calcular">Calcular</button>
+
+      <div id="resultados">
+        <p>IMT: <span id="imt">—</span></p>
+        <p>Imposto do Selo: <span id="selo">—</span></p>
+        <hr>
+        <p><strong>Total de Impostos a Pagar:</strong> <span id="total">—</span></p>
+      </div>
+
+      <button id="exportar">Exportar PDF</button>
+    </div>
+
+    <footer>
+      <p>
+        NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador.
+        Para obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira.
+      </p>
+    </footer>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
