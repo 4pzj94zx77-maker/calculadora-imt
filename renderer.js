@@ -34,7 +34,7 @@ document.getElementById("calcular").addEventListener("click", () => {
     imt = valor * taxa - abatimento;
   } 
   else if (tipo === "terrenos") {
-    imt = valor * 0.050; // Terrenos e outros (5,0%)
+    imt = valor * 0.065; // Terrenos e outros (6,5%)
   }
 
   if (imt < 0) imt = 0;
@@ -65,23 +65,28 @@ document.getElementById("exportar").addEventListener("click", () => {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
   const logo = new Image();
-  logo.src = "assets/icon.png";
+  logo.src = "assets/icon.png"; // logótipo da Falcão Real Estate Agency
 
   logo.onload = () => {
-    // Logótipo no canto superior esquerdo
-    doc.addImage(logo, "PNG", 15, 15, 35, 35);
+    // Obter proporção original do logótipo
+    const logoWidth = 40; // largura desejada
+    const aspectRatio = logo.height / logo.width;
+    const logoHeight = logoWidth * aspectRatio;
+
+    // Logótipo no canto superior esquerdo (sem distorção)
+    doc.addImage(logo, "PNG", 15, 15, logoWidth, logoHeight);
 
     // Data no canto superior direito
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
     doc.text(`Data: ${dataAtual}`, 195, 25, { align: "right" });
 
-    // Título — alinhado abaixo do logótipo
+    // Título logo abaixo do logótipo
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     doc.text("Simulação de IMT e Imposto do Selo", 15, 60);
 
-    // Corpo do PDF
+    // Corpo
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
     doc.text(`Tipo de Habitação: ${tipoTexto}`, 15, 80);
@@ -90,7 +95,7 @@ document.getElementById("exportar").addEventListener("click", () => {
     doc.text(`Imposto do Selo: ${selo}`, 15, 110);
     doc.text(`Total de Impostos: ${total}`, 15, 120);
 
-    // Nota final centrada no rodapé
+    // Nota legal centrada no rodapé
     doc.setFontSize(10);
     doc.setTextColor(100);
     doc.text(
