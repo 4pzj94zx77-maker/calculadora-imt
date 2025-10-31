@@ -1,6 +1,7 @@
-// renderer.js
+// renderer.js — Calculadora IMT v1.0
 const { jsPDF } = window.jspdf;
 
+// --- Cálculo de IMT e Imposto do Selo ---
 document.getElementById("calcular").addEventListener("click", () => {
   const valor = parseFloat(document.getElementById("valor").value);
   const tipo = document.getElementById("tipo").value;
@@ -12,7 +13,7 @@ document.getElementById("calcular").addEventListener("click", () => {
 
   let imt = 0, taxa = 0, abatimento = 0;
 
-  // --- Tabelas AT 2025 (Continente) ---
+  // --- Tabelas AT 2025 ---
   if (tipo === "habitacao_propria") {
     if (valor <= 104261) { taxa = 0; abatimento = 0; }
     else if (valor <= 142618) { taxa = 0.02; abatimento = 2085.22; }
@@ -22,7 +23,7 @@ document.getElementById("calcular").addEventListener("click", () => {
     else if (valor <= 1128287) { taxa = 0.06; abatimento = 0; }
     else { taxa = 0.075; abatimento = 0; }
     imt = valor * taxa - abatimento;
-  }
+  } 
   else if (tipo === "secundaria") {
     if (valor <= 104261) { taxa = 0.01; abatimento = 0; }
     else if (valor <= 142618) { taxa = 0.02; abatimento = 1042.61; }
@@ -32,10 +33,10 @@ document.getElementById("calcular").addEventListener("click", () => {
     else if (valor <= 1128287) { taxa = 0.06; abatimento = 0; }
     else { taxa = 0.075; abatimento = 0; }
     imt = valor * taxa - abatimento;
-  }
+  } 
   else if (tipo === "terrenos") {
-    // Terrenos e outros imóveis urbanos
-    imt = valor * 0.050; // taxa fixa 5,0% (AT 2025)
+    // Terrenos e outros imóveis urbanos (taxa fixa AT 2025)
+    imt = valor * 0.065;
   }
 
   if (imt < 0) imt = 0;
@@ -48,7 +49,7 @@ document.getElementById("calcular").addEventListener("click", () => {
   document.getElementById("total").textContent = total.toFixed(2) + " €";
 });
 
-// --- Exportar PDF ---
+// --- Exportação PDF ---
 document.getElementById("exportar").addEventListener("click", () => {
   const valor = document.getElementById("valor").value;
   const tipoSelect = document.getElementById("tipo");
@@ -63,43 +64,48 @@ document.getElementById("exportar").addEventListener("click", () => {
   }
 
   const dataAtual = new Date().toLocaleDateString("pt-PT");
-  const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
   const logo = new Image();
   logo.src = "assets/icon.png";
 
   logo.onload = () => {
-    // Logótipo no topo esquerdo
-    doc.addImage(logo, "PNG", 40, 40, 100, 50);
-
-    // Título logo abaixo do logótipo (alinhado à esquerda)
+    // Cabeçalho
+    doc.addImage(logo, "PNG", 15, 15, 30, 30);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    doc.text("Simulação de IMT e Imposto do Selo", 40, 110, { align: "left" });
+    doc.text("Simulação de IMT e Imposto de Selo", 55, 30);
 
-    // Data no canto superior direito
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(`Data: ${dataAtual}`, 550, 70, { align: "right" });
+    // Linha separadora
+    doc.setDrawColor(180);
+    doc.setLineWidth(0.3);
+    doc.line(15, 50, 195, 50);
 
-    // Tipo e valores
+    // Dados principais
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
-    doc.text(`Tipo de Habitação: ${tipoTexto}`, 50, 150);
-    doc.text(`Valor de Aquisição: ${valor} €`, 50, 170);
-    doc.text(`IMT: ${imt}`, 50, 190);
-    doc.text(`Imposto do Selo: ${selo}`, 50, 210);
-    doc.text(`Total de Impostos: ${total}`, 50, 230);
+    doc.text(`Tipo de Habitação: ${tipoTexto}`, 15, 65);
+    doc.text(`Valor de Aquisição: ${valor} €`, 15, 75);
+    doc.text(`IMT: ${imt}`, 15, 85);
+    doc.text(`Imposto de Selo: ${selo}`, 15, 95);
+    doc.text(`Total de Impostos: ${total}`, 15, 110);
 
-    // Nota legal
+    // Nota final
     doc.setFontSize(10);
+    doc.setTextColor(100);
     doc.text(
-      "NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador.\nPara obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira.",
-      50,
-      290,
-      { maxWidth: 500 }
+      "NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador. Para obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira.",
+      15,
+      260,
+      { maxWidth: 180 }
     );
 
+    // Data no canto inferior direito
+    doc.setTextColor(120);
+    doc.setFontSize(9);
+    doc.text(`Data: ${dataAtual}`, 195, 280, { align: "right" });
+
+    // Guardar
     doc.save("Simulação_IMT.pdf");
   };
 });
