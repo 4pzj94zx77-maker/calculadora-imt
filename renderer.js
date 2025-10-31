@@ -4,10 +4,9 @@ const { jsPDF } = window.jspdf;
 document.getElementById("calcular").addEventListener("click", () => {
   const valor = parseFloat(document.getElementById("valor").value);
   const tipo = document.getElementById("tipo").value;
-  const jovem = document.getElementById("jovem").checked;
 
   if (isNaN(valor) || valor <= 0) {
-    alert("Por favor, introduz um valor válido.");
+    alert("Por favor, introduza um valor válido.");
     return;
   }
 
@@ -23,8 +22,6 @@ document.getElementById("calcular").addEventListener("click", () => {
     else if (valor <= 1128287) { taxa = 0.06; abatimento = 0; }
     else { taxa = 0.075; abatimento = 0; }
     imt = valor * taxa - abatimento;
-
-    if (jovem && valor <= 316772) imt *= 0.9;
   }
 
   else if (tipo === "secundaria") {
@@ -39,6 +36,7 @@ document.getElementById("calcular").addEventListener("click", () => {
   }
 
   else {
+    // Terrenos e outros
     imt = valor * 0.065;
   }
 
@@ -52,8 +50,11 @@ document.getElementById("calcular").addEventListener("click", () => {
   document.getElementById("total").textContent = total.toFixed(2) + " €";
 });
 
+// --- Exportar PDF ---
 document.getElementById("exportar").addEventListener("click", () => {
   const valor = document.getElementById("valor").value;
+  const tipoSelect = document.getElementById("tipo");
+  const tipoTexto = tipoSelect.options[tipoSelect.selectedIndex].text;
   const imt = document.getElementById("imt").textContent;
   const selo = document.getElementById("selo").textContent;
   const total = document.getElementById("total").textContent;
@@ -64,37 +65,40 @@ document.getElementById("exportar").addEventListener("click", () => {
   }
 
   const dataAtual = new Date().toLocaleDateString("pt-PT");
-
-  const doc = new jsPDF({
-    orientation: "portrait",
-    unit: "pt",
-    format: "a4"
-  });
+  const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
 
   const logo = new Image();
   logo.src = "assets/icon.png";
 
   logo.onload = () => {
-    doc.addImage(logo, "PNG", 40, 30, 90, 45);
+    // Logótipo no topo
+    doc.addImage(logo, "PNG", 40, 40, 100, 50);
+
+    // Título centrado
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    doc.text("Simulação de IMT e Imposto do Selo", 220, 60);
+    doc.text("Simulação de IMT e Imposto do Selo", 300, 70, { align: "center" });
 
+    // Data alinhada à direita
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text(`Data: ${dataAtual}`, 500, 60, { align: "right" });
+    doc.text(`Data: ${dataAtual}`, 550, 70, { align: "right" });
 
+    // Resultados
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
-    doc.text(`Valor de Aquisição: ${valor} €`, 50, 130);
-    doc.text(`IMT: ${imt}`, 50, 150);
-    doc.text(`Imposto do Selo: ${selo}`, 50, 170);
-    doc.text(`Total de Impostos: ${total}`, 50, 190);
+    doc.text(`Tipo de Habitação: ${tipoTexto}`, 50, 130);
+    doc.text(`Valor de Aquisição: ${valor} €`, 50, 150);
+    doc.text(`IMT: ${imt}`, 50, 170);
+    doc.text(`Imposto do Selo: ${selo}`, 50, 190);
+    doc.text(`Total de Impostos: ${total}`, 50, 210);
 
+    // Nota legal
     doc.setFontSize(10);
     doc.text(
       "NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador.\nPara obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira.",
       50,
-      250,
+      270,
       { maxWidth: 500 }
     );
 
