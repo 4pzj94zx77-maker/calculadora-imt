@@ -99,7 +99,7 @@ document.getElementById("exportar").addEventListener("click", () => {
     doc.setFontSize(10);
     doc.setTextColor(100);
     doc.text(
-      "NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador. Para obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira.",
+      "NOTA: A estes valores acrescem os custos associados à escritura. A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador. Para obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira.",
       105,
       275,
       { align: "center", maxWidth: 180 }
