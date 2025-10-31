@@ -61,6 +61,7 @@ label {
   color: #00698f;
 }
 
+/* Campo de valor com símbolo € */
 .valor-input {
   position: relative;
   width: 85%;
@@ -72,7 +73,7 @@ label {
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 14px;
-  color: #00698f;
+  color: #727272;
 }
 
 .valor-input .euro-simbolo {
@@ -80,18 +81,19 @@ label {
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
-  color: #00698f;
-  font-weight: 600;
+  color: #727272;
+  font-weight: 500;
   pointer-events: none;
 }
 
+/* Caixa de seleção */
 select {
   width: 85%;
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 14px;
-  color: #00698f;
+  color: #727272;
 }
 
 /* Botões */
