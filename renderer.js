@@ -34,7 +34,7 @@ document.getElementById("calcular").addEventListener("click", () => {
     imt = valor * taxa - abatimento;
   } 
   else if (tipo === "terrenos") {
-    imt = valor * 0.065; // Terrenos e outros (6,5%)
+    imt = valor * 0.050; // Terrenos e outros (5,0%)
   }
 
   if (imt < 0) imt = 0;
