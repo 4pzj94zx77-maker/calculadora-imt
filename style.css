@@ -91,14 +91,6 @@ select {
   font-size: 14px;
 }
 
-.jovem-container {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 85%;
-  gap: 8px;
-}
-
 button {
   width: 85%;
   padding: 10px 0;
