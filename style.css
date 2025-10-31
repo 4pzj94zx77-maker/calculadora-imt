@@ -9,7 +9,7 @@
 body {
   font-family: "Helvetica Neue", Arial, sans-serif;
   background-color: #ffffff;
-  color: #2e4e52;
+  color: #00698f;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -58,6 +58,7 @@ label {
   font-weight: 600;
   width: 85%;
   text-align: left;
+  color: #00698f;
 }
 
 .valor-input {
@@ -71,6 +72,7 @@ label {
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 14px;
+  color: #00698f;
 }
 
 .valor-input .euro-simbolo {
@@ -78,7 +80,7 @@ label {
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
-  color: #666;
+  color: #00698f;
   font-weight: 600;
   pointer-events: none;
 }
@@ -89,22 +91,25 @@ select {
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 14px;
+  color: #00698f;
 }
 
+/* Botões */
 button {
   width: 85%;
   padding: 10px 0;
-  background-color: #2e4e52;
+  background-color: #00698f;
   color: #fff;
   border: none;
   border-radius: 6px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 button:hover {
-  background-color: #366065;
+  background-color: #0083b0;
+  transform: scale(1.02);
 }
 
 /* Resultados */
@@ -114,6 +119,7 @@ button:hover {
   border-radius: 8px;
   padding: 10px;
   text-align: left;
+  color: #00698f;
 }
 
 #resultados p {
