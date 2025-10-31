@@ -26,15 +26,16 @@ document.getElementById("calcular").addEventListener("click", () => {
   else if (tipo === "secundaria") {
     if (valor <= 104261) { taxa = 0.01; abatimento = 0; }
     else if (valor <= 142618) { taxa = 0.02; abatimento = 1042.61; }
-    else if (valor <= 194458) { taxa = 0.05; abatimento = 5321.15; }  // atualizado da Tabela III
+    else if (valor <= 194458) { taxa = 0.05; abatimento = 5321.15; }
     else if (valor <= 324058) { taxa = 0.07; abatimento = 9210.31; }
-    else if (valor <= 621501) { taxa = 0.08; abatimento = 12450.89; }
+    else if (valor <= 648022) { taxa = 0.08; abatimento = 12450.89; }
     else if (valor <= 1128287) { taxa = 0.06; abatimento = 0; }
     else { taxa = 0.075; abatimento = 0; }
     imt = valor * taxa - abatimento;
   }
-  else { // terrenos ou outros imóveis urbanos
-    imt = valor * 0.065;
+  else if (tipo === "terrenos") {
+    // Terrenos e outros imóveis urbanos
+    imt = valor * 0.065; // taxa fixa 6,5% (AT 2025)
   }
 
   if (imt < 0) imt = 0;
@@ -47,6 +48,7 @@ document.getElementById("calcular").addEventListener("click", () => {
   document.getElementById("total").textContent = total.toFixed(2) + " €";
 });
 
+// --- Exportar PDF ---
 document.getElementById("exportar").addEventListener("click", () => {
   const valor = document.getElementById("valor").value;
   const tipoSelect = document.getElementById("tipo");
@@ -56,7 +58,7 @@ document.getElementById("exportar").addEventListener("click", () => {
   const total = document.getElementById("total").textContent;
 
   if (!valor || imt === "—") {
-    alert("Por favor, realizar primeiro o cálculo.");
+    alert("Por favor, realiza primeiro o cálculo.");
     return;
   }
 
@@ -67,34 +69,34 @@ document.getElementById("exportar").addEventListener("click", () => {
   logo.src = "assets/icon.png";
 
   logo.onload = () => {
-    // Logótipo no topo-esquerda
+    // Logótipo no topo esquerdo
     doc.addImage(logo, "PNG", 40, 40, 100, 50);
 
-    // Título debaixo do logótipo
+    // Título logo abaixo do logótipo (alinhado à esquerda)
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    doc.text("Simulação de IMT e Imposto do Selo", 200, 110, { align: "left" });
+    doc.text("Simulação de IMT e Imposto do Selo", 40, 110, { align: "left" });
 
-    // Data à direita
+    // Data no canto superior direito
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.text(`Data: ${dataAtual}`, 550, 70, { align: "right" });
 
-    // Tipo de Habitação e resultados
+    // Tipo e valores
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
-    doc.text(`Tipo de Habitação: ${tipoTexto}`, 50, 140);
-    doc.text(`Valor de Aquisição: ${valor} €`, 50, 160);
-    doc.text(`IMT: ${imt}`, 50, 180);
-    doc.text(`Imposto do Selo: ${selo}`, 50, 200);
-    doc.text(`Total de Impostos: ${total}`, 50, 220);
+    doc.text(`Tipo de Habitação: ${tipoTexto}`, 50, 150);
+    doc.text(`Valor de Aquisição: ${valor} €`, 50, 170);
+    doc.text(`IMT: ${imt}`, 50, 190);
+    doc.text(`Imposto do Selo: ${selo}`, 50, 210);
+    doc.text(`Total de Impostos: ${total}`, 50, 230);
 
     // Nota legal
     doc.setFontSize(10);
     doc.text(
       "NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador.\nPara obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira.",
       50,
-      280,
+      290,
       { maxWidth: 500 }
     );
 
