@@ -35,7 +35,7 @@ document.getElementById("calcular").addEventListener("click", () => {
   }
   else if (tipo === "terrenos") {
     // Terrenos e outros imóveis urbanos
-    imt = valor * 0.050; // taxa fixa 6,5% (AT 2025)
+    imt = valor * 0.050; // taxa fixa 5,0% (AT 2025)
   }
 
   if (imt < 0) imt = 0;
