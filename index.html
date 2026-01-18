@@ -1,64 +1,83 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora IMT V1.0</title>
-
-  <!-- Favicon e ícones -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
-  <link rel="apple-touch-icon" href="assets/favicon.png">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Calculadora IMT">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
+  <title>Calculadora IMT</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="stylesheet" href="style.css">
-  <script src="jspdf.umd.min.js"></script>
 </head>
-
 <body>
   <div class="app-container">
-    <!-- Logótipo -->
-    <div class="logo-container">
-      <img id="logo" src="assets/icon.png" alt="Falcão Real Estate Agency" class="logo">
+    <!-- Header com logo -->
+    <header class="logo-container">
+      <img src="assets/icon.png" alt="Logo" class="logo">
+    </header>
+    
+    <!-- Título -->
+    <div class="title-section">
+      <h1>Calculadora de IMT</h1>
+      <p class="subtitle">Simule os impostos na compra do seu imóvel</p>
     </div>
 
     <!-- Formulário -->
     <div class="form-container">
-      <label for="valor">Valor de Aquisição (€):</label>
-      <div class="valor-input">
-        <span class="euro-simbolo">€</span>
-        <input type="number" id="valor" placeholder="Introduza valor da compra">
+      <div class="form-group">
+        <label for="valor">Valor de Aquisição</label>
+        <div class="valor-input">
+          <span class="euro-simbolo">€</span>
+          <input type="number" id="valor" placeholder="Ex: 250000">
+        </div>
       </div>
 
-      <label for="tipo">Tipo de Habitação:</label>
-      <select id="tipo">
-        <option value="habitacao_propria">Habitação Própria Permanente</option>
-        <option value="secundaria">Habitação Secundária</option>
-        <option value="terrenos">Terrenos ou Outros</option>
-      </select>
-
-      <button id="calcular">Calcular</button>
-
-      <div id="resultados">
-        <p>IMT: <span id="imt">—</span></p>
-        <p>Imposto do Selo: <span id="selo">—</span></p>
-        <hr>
-        <p><strong>Total de Impostos a Pagar:</strong> <span id="total">—</span></p>
+      <div class="form-group">
+        <label for="tipo">Tipo de Imóvel</label>
+        <select id="tipo">
+          <option value="habitacao_propria">Habitação Própria Permanente</option>
+          <option value="secundaria">Habitação Secundária / Arrendamento</option>
+          <option value="terrenos">Terrenos e Outros</option>
+        </select>
       </div>
 
-      <button id="exportar">Exportar PDF</button>
+      <div class="button-group">
+        <button id="calcular" class="btn-primary">
+          
+          Calcular
+        </button>
+        <button id="exportar" class="btn-secondary">
+          
+          Exportar PDF
+        </button>
+      </div>
     </div>
 
+    <!-- Resultados -->
+    <div id="resultados" class="results-container">
+      <div class="result-header">
+        <span class="result-title">Resultados da Simulação</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">IMT</span>
+        <span id="imt" class="result-value">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Imposto do Selo</span>
+        <span id="selo" class="result-value">—</span>
+      </div>
+      <hr>
+      <div class="result-row total">
+        <span class="result-label">Total de Impostos</span>
+        <span id="total" class="result-value highlight">—</span>
+      </div>
+    </div>
+
+    <!-- Rodapé -->
     <footer>
-      <p>
-        NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador.
-        Para obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira.
-      </p>
+      <p><strong>NOTA:</strong> Esta simulação é meramente indicativa e baseia-se nas tabelas de IMT em vigor. Para valores vinculativos, consulte a Autoridade Tributária.</p>
     </footer>
   </div>
 
+  <script src="jspdf.umd.min.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>

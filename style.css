@@ -1,146 +1,339 @@
-/* Reset */
+/* Reset e Base */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Corpo */
+:root {
+  --primary: #00698f;
+  --primary-dark: #004d6b;
+  --primary-light: #e8f4f8;
+  --accent: #0099cc;
+  --text-dark: #2c3e50;
+  --text-muted: #6c757d;
+  --bg-light: #f8fafc;
+  --white: #ffffff;
+  --border: #e2e8f0;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  background-color: #ffffff;
-  color: #00698f;
-  height: 100vh;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--white) 50%, var(--bg-light) 100%);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  padding: 20px;
+  color: var(--text-dark);
 }
 
-/* Container principal */
+/* Container Principal */
 .app-container {
-  width: 420px;
-  height: 580px;
+  width: 100%;
+  max-width: 440px;
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  padding: 32px 28px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #fff;
-  text-align: center;
-  border-radius: 10px;
-  padding: 20px 0;
+  gap: 24px;
 }
 
-/* Logótipo */
+/* Header / Logo */
 .logo-container {
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 .logo {
-  width: 220px;
+  width: 180px;
   height: auto;
-  margin-bottom: 10px;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.03);
+}
+
+/* Título */
+.title-section {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.title-section h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
 /* Formulário */
 .form-container {
-  width: 100%;
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 label {
   font-weight: 600;
-  width: 85%;
-  text-align: left;
-  color: #00698f;
+  font-size: 0.85rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Campo de valor com símbolo € */
+/* Input de Valor */
 .valor-input {
   position: relative;
-  width: 85%;
 }
 
 .valor-input input {
   width: 100%;
-  padding: 8px 8px 8px 22px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  color: #727272;
+  padding: 14px 14px 14px 36px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  font-size: 1rem;
+  color: var(--text-dark);
+  transition: all 0.2s ease;
+  background: var(--bg-light);
 }
 
-.valor-input .euro-simbolo {
+.valor-input input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(0, 105, 143, 0.1);
+}
+
+.valor-input input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.euro-simbolo {
   position: absolute;
-  left: 8px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #727272;
-  font-weight: 500;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1rem;
   pointer-events: none;
 }
 
-/* Caixa de seleção */
+/* Select */
 select {
-  width: 85%;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  color: #727272;
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  background: var(--bg-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300698f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: var(--white);
+  box-shadow: 0 0 0 4px rgba(0, 105, 143, 0.1);
 }
 
 /* Botões */
-button {
-  width: 85%;
-  padding: 10px 0;
-  background-color: #00698f;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
 }
 
-button:hover {
-  background-color: #0083b0;
-  transform: scale(1.02);
+button {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(0, 105, 143, 0.35);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 105, 143, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.btn-secondary:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
 }
 
 /* Resultados */
-#resultados {
-  width: 85%;
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 10px;
-  text-align: left;
-  color: #00698f;
+.results-container {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-light) 100%);
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1px solid var(--border);
 }
 
-#resultados p {
-  margin: 4px 0;
+.result-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+
+.result-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.result-label {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.result-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.result-row.total {
+  margin-top: 4px;
+}
+
+.result-row.total .result-label {
+  font-weight: 700;
+  color: var(--text-dark);
+  font-size: 1rem;
+}
+
+.result-value.highlight {
+  font-size: 1.2rem;
+  color: var(--primary);
+  font-weight: 700;
 }
 
 hr {
   border: none;
-  border-top: 1px solid #ccc;
-  margin: 10px 0;
+  border-top: 1px dashed var(--border);
+  margin: 8px 0;
 }
 
 /* Rodapé */
 footer {
-  width: 90%;
   text-align: center;
-  font-size: 11px;
-  color: #555;
-  line-height: 1.4;
-  border-top: 1px solid #ddd;
-  padding-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+footer p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+footer strong {
+  color: var(--primary);
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.app-container {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .title-section h1 {
+    font-size: 1.4rem;
+  }
+  
+  .logo {
+    width: 150px;
+  }
+}
+
+/* Remover setas do input number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
