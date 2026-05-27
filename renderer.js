@@ -1,259 +1,229 @@
-const { jsPDF } = window.jspdf;
+// renderer.js — Calculadora IMT V1.0 RE/MAX Grupo Vantagem
 
-// --- Cálculo de IMT e Imposto do Selo ---
-document.getElementById("calcular").addEventListener("click", () => {
-  const valor = parseFloat(document.getElementById("valor").value);
-  const tipo = document.getElementById("tipo").value;
+const VALOR_ESCRITURA_REGISTO = 850;
+const VALOR_PROCESSO_BANCARIO = 850;
+const NOTA_LEGAL = "NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador. Para obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira. Os valores de Escritura + Registo e Processo Bancário são meramente indicativos.";
 
-  if (isNaN(valor) || valor <= 0) {
-    alert("Por favor, introduza um valor válido.");
-    return;
+if (window.REMAX_LOGO_PDF_DATA) {
+  const logo = document.getElementById("logo");
+  if (logo) logo.src = window.REMAX_LOGO_PDF_DATA;
+}
+
+function formatarEuro(valor) {
+  return valor.toLocaleString("pt-PT", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }) + " €";
+}
+
+function obterValorNumerico(id) {
+  const valor = parseFloat(document.getElementById(id).value);
+  return isNaN(valor) ? 0 : valor;
+}
+
+async function garantirJsPDF() {
+  if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+
+  const fontes = [
+    "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+    "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"
+  ];
+
+  for (const src of fontes) {
+    try {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+
+      if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+    } catch (error) {
+      // Tenta a próxima fonte.
+    }
   }
 
-  let imt = 0, taxa = 0, abatimento = 0;
+  alert("Não foi possível carregar a biblioteca de exportação PDF. Verifica a ligação à internet e tenta novamente.");
+  return null;
+}
 
-  // --- Tabelas AT 2026 (atualização de 2% face a 2025) ---
+function calcularIMT(valor, tipo) {
+  let imt = 0;
+  let taxa = 0;
+  let abatimento = 0;
+
+  // Tabelas IMT 2025 — Continente
   if (tipo === "habitacao_propria") {
-    if (valor <= 106346) { taxa = 0; abatimento = 0; }
-    else if (valor <= 145470) { taxa = 0.02; abatimento = 2126.92; }
-    else if (valor <= 198347) { taxa = 0.05; abatimento = 6491.03; }
-    else if (valor <= 330539) { taxa = 0.07; abatimento = 10457.97; }
-    else if (valor <= 660982) { taxa = 0.08; abatimento = 13763.36; }
-    else if (valor <= 1150853) { taxa = 0.06; abatimento = 0; }
+    if (valor <= 104261) { taxa = 0; abatimento = 0; }
+    else if (valor <= 142618) { taxa = 0.02; abatimento = 2085.22; }
+    else if (valor <= 194458) { taxa = 0.05; abatimento = 6363.76; }
+    else if (valor <= 324058) { taxa = 0.07; abatimento = 10252.92; }
+    else if (valor <= 648022) { taxa = 0.08; abatimento = 13493.50; }
+    else if (valor <= 1128287) { taxa = 0.06; abatimento = 0; }
     else { taxa = 0.075; abatimento = 0; }
+
     imt = valor * taxa - abatimento;
-  } 
+  }
+
   else if (tipo === "secundaria") {
-    if (valor <= 106346) { taxa = 0.01; abatimento = 0; }
-    else if (valor <= 145470) { taxa = 0.02; abatimento = 1063.46; }
-    else if (valor <= 198347) { taxa = 0.05; abatimento = 5427.57; }
-    else if (valor <= 330539) { taxa = 0.07; abatimento = 9394.51; }
-    else if (valor <= 660982) { taxa = 0.08; abatimento = 12699.90; }
-    else if (valor <= 1150853) { taxa = 0.06; abatimento = 0; }
+    if (valor <= 104261) { taxa = 0.01; abatimento = 0; }
+    else if (valor <= 142618) { taxa = 0.02; abatimento = 1042.61; }
+    else if (valor <= 194458) { taxa = 0.05; abatimento = 5321.15; }
+    else if (valor <= 324058) { taxa = 0.07; abatimento = 9210.31; }
+    else if (valor <= 648022) { taxa = 0.08; abatimento = 12450.89; }
+    else if (valor <= 1128287) { taxa = 0.06; abatimento = 0; }
     else { taxa = 0.075; abatimento = 0; }
+
     imt = valor * taxa - abatimento;
-  } 
+  }
+
   else if (tipo === "terrenos") {
     imt = valor * 0.065;
   }
 
-  if (imt < 0) imt = 0;
+  return imt < 0 ? 0 : imt;
+}
 
+function calcular() {
+  const valor = obterValorNumerico("valor");
+  const financiamento = obterValorNumerico("financiamento");
+  const tipo = document.getElementById("tipo").value;
+
+  if (valor <= 0) {
+    alert("Por favor, introduza um valor de aquisição válido.");
+    return;
+  }
+
+  const imt = calcularIMT(valor, tipo);
   const selo = valor * 0.008;
-  const total = imt + selo;
+  const seloFinanciamento = financiamento * 0.006;
+  const escrituraRegisto = VALOR_ESCRITURA_REGISTO;
+  const processoBancario = financiamento > 0 ? VALOR_PROCESSO_BANCARIO : 0;
 
-  document.getElementById("imt").textContent = imt.toFixed(2) + " €";
-  document.getElementById("selo").textContent = selo.toFixed(2) + " €";
-  document.getElementById("total").textContent = total.toFixed(2) + " €";
+  const total = imt + selo + seloFinanciamento + escrituraRegisto + processoBancario;
+
+  document.getElementById("imt").textContent = formatarEuro(imt);
+  document.getElementById("selo").textContent = formatarEuro(selo);
+  document.getElementById("selo-financiamento").textContent = formatarEuro(seloFinanciamento);
+  document.getElementById("escritura").textContent = formatarEuro(escrituraRegisto);
+  document.getElementById("processo").textContent = formatarEuro(processoBancario);
+  document.getElementById("total").textContent = formatarEuro(total);
+}
+
+document.getElementById("calcular").addEventListener("click", calcular);
+
+document.getElementById("valor").addEventListener("keydown", (event) => {
+  if (event.key === "Enter") calcular();
 });
 
-// --- Função para converter imagem para Base64 ---
-function getBase64Image(imgPath) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-      resolve({
-        data: canvas.toDataURL("image/png"),
-        width: img.width,
-        height: img.height
-      });
-    };
-    img.onerror = () => reject(new Error("Erro ao carregar imagem"));
-    img.src = imgPath;
-  });
-}
+document.getElementById("financiamento").addEventListener("keydown", (event) => {
+  if (event.key === "Enter") calcular();
+});
 
-// --- Formatar número com separador de milhares ---
-function formatarNumero(num) {
-  return parseFloat(num).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-// --- Cores da marca ---
-const cores = {
-  primaria: [0, 105, 143],      // #00698F - Azul Falcão
-  escura: [0, 77, 107],         // #004D6B - Azul escuro
-  clara: [232, 244, 248],       // #E8F4F8 - Azul claro
-  texto: [44, 62, 80],          // #2C3E50 - Texto escuro
-  cinza: [108, 117, 125],       // #6C757D - Texto secundário
-  branco: [255, 255, 255]
-};
-
-// --- Exportação PDF ---
 document.getElementById("exportar").addEventListener("click", async () => {
+  const jsPDF = await garantirJsPDF();
+  if (!jsPDF) return;
+
   const valor = document.getElementById("valor").value;
+  const financiamento = document.getElementById("financiamento").value || "0";
   const tipoSelect = document.getElementById("tipo");
   const tipoTexto = tipoSelect.options[tipoSelect.selectedIndex].text;
-  const imt = document.getElementById("imt").textContent.replace(" €", "");
-  const selo = document.getElementById("selo").textContent.replace(" €", "");
-  const total = document.getElementById("total").textContent.replace(" €", "");
+
+  const imt = document.getElementById("imt").textContent;
+  const selo = document.getElementById("selo").textContent;
+  const seloFinanciamento = document.getElementById("selo-financiamento").textContent;
+  const escritura = document.getElementById("escritura").textContent;
+  const processo = document.getElementById("processo").textContent;
+  const total = document.getElementById("total").textContent;
 
   if (!valor || imt === "—") {
     alert("Por favor, realiza primeiro o cálculo.");
     return;
   }
 
-  const dataAtual = new Date().toLocaleDateString("pt-PT", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric"
-  });
-
+  const dataAtual = new Date().toLocaleDateString("pt-PT");
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 20;
 
-  // --- HEADER com fundo colorido ---
-  doc.setFillColor(...cores.primaria);
-  doc.rect(0, 0, pageWidth, 50, "F");
-
-  // Logótipo
-  try {
-    const logoData = await getBase64Image("assets/icon_branco.png");
-    const logoHeight = 25;
-    const logoWidth = (logoData.width / logoData.height) * logoHeight;
-    doc.addImage(logoData.data, "PNG", margin, 12, logoWidth, logoHeight);
-  } catch (e) {
-    // Fallback: texto se o logo não carregar
-    doc.setTextColor(...cores.branco);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("FALCÃO", margin, 28);
-    doc.setFontSize(10);
-    doc.text("Real Estate Agency", margin, 35);
+  if (!window.REMAX_LOGO_PDF_DATA) {
+    alert("Não foi possível preparar o logotipo da RE/MAX Vantagem para o PDF. Tenta recarregar a página.");
+    return;
   }
 
-  // Data no header
-  doc.setTextColor(...cores.branco);
+  // Cabeçalho
+  doc.addImage(window.REMAX_LOGO_PDF_DATA, "PNG", 15, 14, 72, 20);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(15);
+  doc.setTextColor(0, 75, 147);
+  doc.text("Simulação de IMT e Imposto de Selo", 15, 52, { align: "left" });
+
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.text(dataAtual, pageWidth - margin, 30, { align: "right" });
+  doc.setTextColor(114, 114, 114);
+  doc.text(`Data: ${dataAtual}`, 195, 22, { align: "right" });
 
-  // --- TÍTULO ---
-  doc.setTextColor(...cores.texto);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
-  doc.text("Simulação de Impostos", margin, 70);
-  
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  doc.setTextColor(...cores.cinza);
-  doc.text("IMT e Imposto do Selo na aquisição de imóvel", margin, 80);
+  doc.setDrawColor(228, 0, 43);
+  doc.setLineWidth(0.7);
+  doc.line(15, 59, 195, 59);
 
-  // --- Linha decorativa ---
-  doc.setDrawColor(...cores.primaria);
-  doc.setLineWidth(0.8);
-  doc.line(margin, 88, pageWidth - margin, 88);
+  // Cartão: dados principais
+  doc.setDrawColor(230, 230, 230);
+  doc.setFillColor(248, 249, 250);
+  doc.roundedRect(15, 72, 180, 48, 3, 3, "FD");
 
-  // --- SECÇÃO: Dados da Simulação ---
-  let yPos = 105;
-
-  doc.setFillColor(...cores.clara);
-  doc.roundedRect(margin, yPos - 8, pageWidth - (margin * 2), 35, 3, 3, "F");
-
-  doc.setTextColor(...cores.primaria);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
-  doc.text("DADOS DA SIMULAÇÃO", margin + 8, yPos);
+  doc.setTextColor(0, 75, 147);
+  doc.text("Dados da Simulação", 22, 84);
 
-  yPos += 12;
-  doc.setTextColor(...cores.texto);
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  doc.text(`Tipo de Habitação: ${tipoTexto}`, 22, 94);
+  doc.text(`Valor de Aquisição: ${valor} €`, 22, 103);
+  doc.text(`Valor do Financiamento: ${financiamento} €`, 22, 112);
 
-  // Tipo de imóvel
-  doc.text("Tipo de Imóvel:", margin + 8, yPos);
-  doc.setFont("helvetica", "bold");
-  doc.text(tipoTexto, margin + 50, yPos);
+  // Cartão: custos
+  doc.setDrawColor(230, 230, 230);
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(15, 122, 180, 68, 3, 3, "FD");
 
-  yPos += 10;
-  doc.setFont("helvetica", "normal");
-  doc.text("Valor de Aquisição:", margin + 8, yPos);
-  doc.setFont("helvetica", "bold");
-  doc.text(formatarNumero(valor) + " €", margin + 50, yPos);
-
-  // --- SECÇÃO: Resultados ---
-  yPos = 160;
-
-  doc.setTextColor(...cores.primaria);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
-  doc.text("IMPOSTOS CALCULADOS", margin, yPos);
+  doc.setTextColor(0, 75, 147);
+  doc.text("Resumo de Custos", 22, 134);
 
-  yPos += 5;
-  doc.setDrawColor(...cores.primaria);
-  doc.setLineWidth(0.5);
-  doc.line(margin, yPos, margin + 50, yPos);
-
-  // Tabela de resultados
-  yPos += 15;
-  const colLabel = margin;
-  const colValue = pageWidth - margin - 40;
-
-  // IMT
-  doc.setFillColor(250, 250, 250);
-  doc.rect(margin, yPos - 6, pageWidth - (margin * 2), 14, "F");
-  doc.setTextColor(...cores.texto);
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
-  doc.text("IMT (Imposto Municipal sobre Transmissões)", colLabel + 5, yPos + 2);
-  doc.setFont("helvetica", "bold");
-  doc.text(imt + " €", colValue, yPos + 2, { align: "right" });
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  doc.text(`IMT: ${imt}`, 22, 146);
+  doc.text(`Imposto do Selo: ${selo}`, 22, 156);
+  doc.text(`Imposto sobre Financiamento (0,6%): ${seloFinanciamento}`, 22, 166);
+  doc.text(`Escritura + Registo: ${escritura}`, 22, 176);
+  doc.text(`Processo Bancário: ${processo}`, 22, 186);
 
-  yPos += 18;
-  // Imposto do Selo
-  doc.setFont("helvetica", "normal");
-  doc.text("Imposto do Selo (0,8%)", colLabel + 5, yPos + 2);
-  doc.setFont("helvetica", "bold");
-  doc.text(selo + " €", colValue, yPos + 2, { align: "right" });
+  // Total em destaque
+  doc.setFillColor(0, 75, 147);
+  doc.roundedRect(15, 203, 180, 18, 3, 3, "F");
 
-  // Linha separadora
-  yPos += 12;
-  doc.setDrawColor(200, 200, 200);
-  doc.setLineWidth(0.3);
-  doc.line(margin, yPos, pageWidth - margin, yPos);
-
-  // TOTAL
-  yPos += 15;
-  doc.setFillColor(...cores.primaria);
-  doc.roundedRect(margin, yPos - 8, pageWidth - (margin * 2), 18, 3, 3, "F");
-  
-  doc.setTextColor(...cores.branco);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);
-  doc.text("TOTAL DE IMPOSTOS", colLabel + 5, yPos + 4);
-  doc.setFontSize(14);
-  doc.text(total + " €", colValue, yPos + 4, { align: "right" });
+  doc.setTextColor(255, 255, 255);
+  doc.text(`Total Estimado a Pagar: ${total}`, 22, 215);
 
-  // --- AVISO LEGAL (sem moldura, sem tom amarelo) ---
-  const avisoY = pageHeight - 50;
-  
-  doc.setTextColor(...cores.cinza);
-  doc.setFont("helvetica", "bold");
+  // Nota legal
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
-  doc.text("AVISO LEGAL", margin, avisoY);
+  doc.setTextColor(100, 100, 100);
+  doc.text(
+    NOTA_LEGAL,
+    15,
+    260,
+    { maxWidth: 180 }
+  );
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(120, 120, 120);
-  const avisoTexto = "Esta simulação é meramente indicativa e baseia-se nas tabelas de IMT em vigor. Os valores apresentados dependem dos dados introduzidos e não têm caráter vinculativo. Para obter cálculos finais e oficiais, deverá contactar a Autoridade Tributária e Aduaneira.";
-  doc.text(avisoTexto, margin, avisoY + 8, { maxWidth: pageWidth - (margin * 2) });
-
-  // --- RODAPÉ ---
-  doc.setDrawColor(...cores.primaria);
-  doc.setLineWidth(0.3);
-  doc.line(margin, pageHeight - 15, pageWidth - margin, pageHeight - 15);
-
-  doc.setTextColor(...cores.cinza);
-  doc.setFontSize(8);
-  doc.text("Documento gerado automaticamente pela Calculadora IMT | Falcão Real Estate Agency", pageWidth / 2, pageHeight - 8, { align: "center" });
-
-  // Guardar PDF
-  doc.save("Simulacao_IMT_Falcao.pdf");
+  doc.save("Simulação_IMT.pdf");
 });

@@ -1,83 +1,77 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora IMT</title>
-  <link rel="icon" type="image/png" href="assets/favicon.png">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="app-container">
-    <!-- Header com logo -->
-    <header class="logo-container">
-      <img src="assets/icon.png" alt="Logo" class="logo">
-    </header>
-    
-    <!-- Título -->
-    <div class="title-section">
-      <h1>Calculadora de IMT</h1>
-      <p class="subtitle">Simule os impostos na compra do seu imóvel</p>
-    </div>
+  <title>Calculadora IMT V1.4</title>
 
-    <!-- Formulário -->
-    <div class="form-container">
-      <div class="form-group">
-        <label for="valor">Valor de Aquisição</label>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/balao.png">
+  <link rel="apple-touch-icon" href="assets/balao.png">
+  <meta name="theme-color" content="#004b93">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Calculadora IMT">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+  <main class="app-container">
+    <section class="form-container" aria-label="Simulação de impostos">
+      <div class="form-heading">
+        <img id="logo" src="assets/grupovantagem-logo-horizontal-01.png" alt="RE/MAX Grupo Vantagem" class="logo">
+        <h1>Calculadora IMT</h1>
+      </div>
+
+      <div class="field-group">
+        <label for="valor">Valor de aquisição</label>
         <div class="valor-input">
           <span class="euro-simbolo">€</span>
-          <input type="number" id="valor" placeholder="Ex: 250000">
+          <input type="number" id="valor" placeholder="Ex.: 250000" inputmode="decimal" min="0" step="1000">
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="tipo">Tipo de Imóvel</label>
+      <div class="field-group">
+        <label for="financiamento">Valor do financiamento</label>
+        <div class="valor-input">
+          <span class="euro-simbolo">€</span>
+          <input type="number" id="financiamento" placeholder="Ex.: 180000" inputmode="decimal" min="0" step="1000">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="tipo">Tipo de habitação</label>
         <select id="tipo">
           <option value="habitacao_propria">Habitação Própria Permanente</option>
-          <option value="secundaria">Habitação Secundária / Arrendamento</option>
-          <option value="terrenos">Terrenos e Outros</option>
+          <option value="secundaria">Habitação Secundária</option>
+          <option value="terrenos">Terrenos ou Outros</option>
         </select>
       </div>
 
-      <div class="button-group">
-        <button id="calcular" class="btn-primary">
-          
-          Calcular
-        </button>
-        <button id="exportar" class="btn-secondary">
-          
-          Exportar PDF
-        </button>
-      </div>
-    </div>
+      <button id="calcular" type="button">Calcular</button>
 
-    <!-- Resultados -->
-    <div id="resultados" class="results-container">
-      <div class="result-header">
-        <span class="result-title">Resultados da Simulação</span>
+      <div id="resultados" aria-live="polite">
+        <p><span class="resultado-label">IMT</span> <span id="imt">—</span></p>
+        <p><span class="resultado-label">Imposto do Selo</span> <span id="selo">—</span></p>
+        <p><span class="resultado-label">Imposto sobre Financiamento</span> <span id="selo-financiamento">—</span></p>
+        <p><span class="resultado-label">Escritura + Registo</span> <span id="escritura">—</span></p>
+        <p><span class="resultado-label">Processo Bancário</span> <span id="processo">—</span></p>
+        <hr>
+        <p class="total"><strong>Total estimado</strong> <span id="total">—</span></p>
       </div>
-      <div class="result-row">
-        <span class="result-label">IMT</span>
-        <span id="imt" class="result-value">—</span>
-      </div>
-      <div class="result-row">
-        <span class="result-label">Imposto do Selo</span>
-        <span id="selo" class="result-value">—</span>
-      </div>
-      <hr>
-      <div class="result-row total">
-        <span class="result-label">Total de Impostos</span>
-        <span id="total" class="result-value highlight">—</span>
-      </div>
-    </div>
 
-    <!-- Rodapé -->
-    <footer>
-      <p><strong>NOTA:</strong> Esta simulação é meramente indicativa e baseia-se nas tabelas de IMT em vigor. Para valores vinculativos, consulte a Autoridade Tributária.</p>
-    </footer>
-  </div>
+      <button id="exportar" type="button" class="exportar">Exportar PDF</button>
 
-  <script src="jspdf.umd.min.js"></script>
+      <p class="legal-note">
+        NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador.
+        Para obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira.
+        Os valores de Escritura + Registo e Processo Bancário são meramente indicativos.
+      </p>
+    </section>
+  </main>
+
+  <script src="assets/logo-remax-pdf-data.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>
