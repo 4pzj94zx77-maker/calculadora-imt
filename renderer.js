@@ -21,6 +21,23 @@ function obterValorNumerico(id) {
   return isNaN(valor) ? 0 : valor;
 }
 
+function formatarValorInput(valor) {
+  return Number.isInteger(valor) ? String(valor) : valor.toFixed(2);
+}
+
+function atualizarFinanciamentoAutomatico() {
+  const valorAquisicao = obterValorNumerico("valor");
+  const campoFinanciamento = document.getElementById("financiamento");
+
+  if (valorAquisicao <= 0) {
+    campoFinanciamento.value = "";
+    return;
+  }
+
+  const financiamento = Math.round(valorAquisicao * 0.9 * 100) / 100;
+  campoFinanciamento.value = formatarValorInput(financiamento);
+}
+
 async function garantirJsPDF() {
   if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
 
@@ -114,6 +131,8 @@ function calcular() {
 }
 
 document.getElementById("calcular").addEventListener("click", calcular);
+
+document.getElementById("valor").addEventListener("input", atualizarFinanciamentoAutomatico);
 
 document.getElementById("valor").addEventListener("keydown", (event) => {
   if (event.key === "Enter") calcular();
