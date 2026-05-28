@@ -2,6 +2,7 @@
 
 const VALOR_ESCRITURA_REGISTO = 850;
 const VALOR_PROCESSO_BANCARIO = 850;
+const PERCENTAGEM_FINANCIAMENTO_PADRAO = 90;
 const NOTA_LEGAL = "NOTA: A informação aqui apresentada é meramente indicativa e depende dos dados introduzidos pelo utilizador. Para obter cálculos finais e vinculativos deverá contactar a Autoridade Tributária e Aduaneira. Os valores de Escritura + Registo e Processo Bancário são meramente indicativos.";
 
 if (window.REMAX_LOGO_PDF_DATA) {
@@ -28,14 +29,30 @@ function formatarValorInput(valor) {
 function atualizarFinanciamentoAutomatico() {
   const valorAquisicao = obterValorNumerico("valor");
   const campoFinanciamento = document.getElementById("financiamento");
+  const campoPercentagem = document.getElementById("percentagem-financiamento");
+  const percentagem = campoPercentagem.value === "" ? PERCENTAGEM_FINANCIAMENTO_PADRAO : obterValorNumerico("percentagem-financiamento");
 
   if (valorAquisicao <= 0) {
     campoFinanciamento.value = "";
     return;
   }
 
-  const financiamento = Math.round(valorAquisicao * 0.9 * 100) / 100;
+  const financiamento = Math.round(valorAquisicao * (percentagem / 100) * 100) / 100;
   campoFinanciamento.value = formatarValorInput(financiamento);
+}
+
+function atualizarPercentagemFinanciamento() {
+  const valorAquisicao = obterValorNumerico("valor");
+  const financiamento = obterValorNumerico("financiamento");
+  const campoPercentagem = document.getElementById("percentagem-financiamento");
+
+  if (valorAquisicao <= 0) {
+    campoPercentagem.value = String(PERCENTAGEM_FINANCIAMENTO_PADRAO);
+    return;
+  }
+
+  const percentagem = Math.round((financiamento / valorAquisicao) * 10000) / 100;
+  campoPercentagem.value = formatarValorInput(percentagem);
 }
 
 async function garantirJsPDF() {
@@ -108,14 +125,15 @@ function calcular() {
   const valor = obterValorNumerico("valor");
   const financiamento = obterValorNumerico("financiamento");
   const tipo = document.getElementById("tipo").value;
+  const aplicarIsencaoJovem = document.getElementById("isencao-jovem").checked;
 
   if (valor <= 0) {
     alert("Por favor, introduza um valor de aquisição válido.");
     return;
   }
 
-  const imt = calcularIMT(valor, tipo);
-  const selo = valor * 0.008;
+  const imt = aplicarIsencaoJovem ? 0 : calcularIMT(valor, tipo);
+  const selo = aplicarIsencaoJovem ? 0 : valor * 0.008;
   const seloFinanciamento = financiamento * 0.006;
   const escrituraRegisto = VALOR_ESCRITURA_REGISTO;
   const processoBancario = financiamento > 0 ? VALOR_PROCESSO_BANCARIO : 0;
@@ -133,6 +151,8 @@ function calcular() {
 document.getElementById("calcular").addEventListener("click", calcular);
 
 document.getElementById("valor").addEventListener("input", atualizarFinanciamentoAutomatico);
+document.getElementById("percentagem-financiamento").addEventListener("input", atualizarFinanciamentoAutomatico);
+document.getElementById("financiamento").addEventListener("input", atualizarPercentagemFinanciamento);
 
 document.getElementById("valor").addEventListener("keydown", (event) => {
   if (event.key === "Enter") calcular();
@@ -148,6 +168,8 @@ document.getElementById("exportar").addEventListener("click", async () => {
 
   const valor = document.getElementById("valor").value;
   const financiamento = document.getElementById("financiamento").value || "0";
+  const percentagemFinanciamento = document.getElementById("percentagem-financiamento").value || "0";
+  const isencaoJovem = document.getElementById("isencao-jovem").checked ? "Sim" : "Não";
   const tipoSelect = document.getElementById("tipo");
   const tipoTexto = tipoSelect.options[tipoSelect.selectedIndex].text;
 
@@ -191,7 +213,7 @@ document.getElementById("exportar").addEventListener("click", async () => {
   // Cartão: dados principais
   doc.setDrawColor(230, 230, 230);
   doc.setFillColor(248, 249, 250);
-  doc.roundedRect(15, 72, 180, 48, 3, 3, "FD");
+  doc.roundedRect(15, 72, 180, 70, 3, 3, "FD");
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
@@ -203,35 +225,37 @@ document.getElementById("exportar").addEventListener("click", async () => {
   doc.setTextColor(0, 0, 0);
   doc.text(`Tipo de Habitação: ${tipoTexto}`, 22, 94);
   doc.text(`Valor de Aquisição: ${valor} €`, 22, 103);
-  doc.text(`Valor do Financiamento: ${financiamento} €`, 22, 112);
+  doc.text(`Percentagem de Financiamento: ${percentagemFinanciamento}%`, 22, 112);
+  doc.text(`Valor do Financiamento: ${financiamento} €`, 22, 121);
+  doc.text(`Isenção IMT Jovem: ${isencaoJovem}`, 22, 130);
 
   // Cartão: custos
   doc.setDrawColor(230, 230, 230);
   doc.setFillColor(255, 255, 255);
-  doc.roundedRect(15, 122, 180, 68, 3, 3, "FD");
+  doc.roundedRect(15, 152, 180, 68, 3, 3, "FD");
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.setTextColor(0, 75, 147);
-  doc.text("Resumo de Custos", 22, 134);
+  doc.text("Resumo de Custos", 22, 164);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.setTextColor(0, 0, 0);
-  doc.text(`IMT: ${imt}`, 22, 146);
-  doc.text(`Imposto do Selo: ${selo}`, 22, 156);
-  doc.text(`Imposto sobre Financiamento (0,6%): ${seloFinanciamento}`, 22, 166);
-  doc.text(`Escritura + Registo: ${escritura}`, 22, 176);
-  doc.text(`Processo Bancário: ${processo}`, 22, 186);
+  doc.text(`IMT: ${imt}`, 22, 176);
+  doc.text(`Imposto do Selo: ${selo}`, 22, 186);
+  doc.text(`Imposto sobre Financiamento (0,6%): ${seloFinanciamento}`, 22, 196);
+  doc.text(`Escritura + Registo: ${escritura}`, 22, 206);
+  doc.text(`Processo Bancário: ${processo}`, 22, 216);
 
   // Total em destaque
   doc.setFillColor(0, 75, 147);
-  doc.roundedRect(15, 203, 180, 18, 3, 3, "F");
+  doc.roundedRect(15, 233, 180, 18, 3, 3, "F");
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);
   doc.setTextColor(255, 255, 255);
-  doc.text(`Total Estimado a Pagar: ${total}`, 22, 215);
+  doc.text(`Total Estimado a Pagar: ${total}`, 22, 245);
 
   // Nota legal
   doc.setFont("helvetica", "normal");

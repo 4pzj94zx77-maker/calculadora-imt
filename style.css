@@ -82,9 +82,24 @@ label {
   position: relative;
 }
 
+.percent-input {
+  position: relative;
+}
+
 .euro-simbolo {
   position: absolute;
   left: 14px;
+  top: 50%;
+  color: var(--remax-blue);
+  font-size: 16px;
+  font-weight: 800;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.percent-simbolo {
+  position: absolute;
+  right: 14px;
   top: 50%;
   color: var(--remax-blue);
   font-size: 16px;
@@ -110,6 +125,10 @@ select {
 
 .valor-input input {
   padding-left: 36px;
+}
+
+.percent-input input {
+  padding-right: 38px;
 }
 
 select {
@@ -151,6 +170,29 @@ button {
 
 button:active {
   transform: translateY(1px);
+}
+
+.checkbox-row {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  min-height: 42px;
+  padding: 9px 10px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.3;
+  background: var(--soft-blue);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.checkbox-row input {
+  width: 18px;
+  min-height: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--remax-blue);
 }
 
 #resultados {

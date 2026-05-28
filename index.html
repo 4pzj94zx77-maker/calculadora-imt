@@ -41,6 +41,14 @@
       </div>
 
       <div class="field-group">
+        <label for="percentagem-financiamento">Percentagem de financiamento</label>
+        <div class="percent-input">
+          <input type="number" id="percentagem-financiamento" value="90" inputmode="decimal" min="0" max="100" step="1">
+          <span class="percent-simbolo">%</span>
+        </div>
+      </div>
+
+      <div class="field-group">
         <label for="tipo">Tipo de habitação</label>
         <select id="tipo">
           <option value="habitacao_propria">Habitação Própria Permanente</option>
@@ -48,6 +56,11 @@
           <option value="terrenos">Terrenos ou Outros</option>
         </select>
       </div>
+
+      <label class="checkbox-row" for="isencao-jovem">
+        <input type="checkbox" id="isencao-jovem">
+        <span>Aplicar isenção IMT Jovem</span>
+      </label>
 
       <button id="calcular" type="button">Calcular</button>
 
