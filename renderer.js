@@ -55,6 +55,21 @@ function atualizarPercentagemFinanciamento() {
   campoPercentagem.value = formatarValorInput(percentagem);
 }
 
+function reporCalculadora() {
+  document.getElementById("valor").value = "";
+  document.getElementById("financiamento").value = "";
+  document.getElementById("percentagem-financiamento").value = String(PERCENTAGEM_FINANCIAMENTO_PADRAO);
+  document.getElementById("tipo").value = "habitacao_propria";
+  document.getElementById("isencao-jovem").checked = false;
+
+  document.getElementById("imt").textContent = "—";
+  document.getElementById("selo").textContent = "—";
+  document.getElementById("selo-financiamento").textContent = "—";
+  document.getElementById("escritura").textContent = "—";
+  document.getElementById("processo").textContent = "—";
+  document.getElementById("total").textContent = "—";
+}
+
 async function garantirJsPDF() {
   if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
 
@@ -149,6 +164,13 @@ function calcular() {
 }
 
 document.getElementById("calcular").addEventListener("click", calcular);
+document.getElementById("logo").addEventListener("click", reporCalculadora);
+document.getElementById("logo").addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    reporCalculadora();
+  }
+});
 
 document.getElementById("valor").addEventListener("input", atualizarFinanciamentoAutomatico);
 document.getElementById("percentagem-financiamento").addEventListener("input", atualizarFinanciamentoAutomatico);

@@ -57,6 +57,13 @@ body {
   display: block;
   width: min(210px, 68vw);
   height: auto;
+  cursor: pointer;
+}
+
+.logo:focus-visible {
+  outline: 3px solid rgba(0, 75, 147, 0.24);
+  outline-offset: 8px;
+  border-radius: 6px;
 }
 
 h1 {
